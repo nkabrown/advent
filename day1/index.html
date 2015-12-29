@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Advent of Code</title>
+<script>
+  // construct a XMLHttpRequest object
+  const reader = new XMLHttpRequest();
+
+  // fetch input data
+  const loadFile = () => {
+    reader.open('GET', 'input.txt');
+    reader.onreadystatechange = grandTotal;
+    reader.send();
+  }
+
+  const computeFile = () => {
+    reader.open('GET', 'input.txt');
+    reader.onreadystatechange = hitTheBasement;
+    reader.send();
+  }
+
+  // what floor does Santa end on
+  const grandTotal = () => {
+    var txt = reader.responseText;
+    var count = 0;
+    for (i in txt) {
+      if (txt[i] === '(') {
+        count++;
+      } else if (txt[i] === ')') {
+        count--;
+      }
+    }
+    displayFloor(count);
+  }
+
+  // what is the file position when Santa enters the basement level
+  const hitTheBasement = () => {
+    var txt = reader.responseText;
+    var count = 0;
+    var position = 0;
+    for (i in txt) {
+      position++;
+      if (txt[i] === '(' && count != -1) {
+        count++;
+      } else if (txt[i] === ')' && count != -1) {
+        count--;
+      } else if (count == -1) {
+        return position;
+      }
+      displayBasement(position);
+    }
+  }
+
+  const displayFloor = (num) => {
+    if (reader.readyState == 4) {
+      var el = document.getElementById('main');
+      el.innerHTML = num;
+    }
+  }
+
+  const displayBasement = (num) => {
+    if (reader.readyState == 4) {
+      var el = document.getElementById('basement');
+      el.innerHTML = num;
+    }
+  }
+
+</script>
+<p>Santa is trying to deliver presents in a large apartment building, but he
+can't find the right floor - the directions he got are a little confusing. He
+starts on the ground floor (floor 0) and then follows the instructions one
+character at a time.</p>
+<p>An opening parenthesis, (, means he should go up one floor, and a closing
+parenthesis, ), means he should go down one floor.</p>
+<p>The apartment building is very tall, and the basement is very deep; he will
+never find the top or bottom floors.</p>
+<p>For example:</p>
+<ul>
+  <li>(()) and ()() both result in floor 0.</li>
+  <li>((( and (()(()( both result in floor 3.</li>
+  <li>))((((( also results in floor 3.</li>
+  <li>()) and ))( both result in floor -1 (the first basement level).</li>
+  <li>))) and )())()) both result in floor -3.</li>
+</ul>
+<p>To <em>what floor</em> do the instructions take Santa?</p>
+<input id="first" type="button" value="Answer" onclick="loadFile()">
+<div id="main"></div>
+<p>Now, given the same instructions, find the <em>position</em> of the first
+character that causes him to enter the basement (floor -1). The first character
+in the instructions has position 1, the second character has position 2, and so
+on.</p>
+<p>For example:</p>
+<ul>
+  <li>) causes him to enter the basement at character position 1.</li>
+  <li>()()) causes him to enter the basement at character position 5.</li>
+</ul>
+<p>What is the <em>position</em> of the character that causes Santa to first
+enter the basement?</p>
+<input id="second" type="button" value="Answer" onclick="computeFile()">
+<div id="basement"></div>
